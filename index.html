@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Карта АЗС Украина СК-42 WGS-84 Заправки ТЭК Украины Топливо Энергетика База Данных">
+
+    <title>Интерактивная Карта АЗС</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Proj4JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+    <!-- PapaParse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Yandex Maps API -->
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="overlay-ui">
+        <header class="glass-panel main-header">
+            <div class="header-icon">
+                <i class="ph-fill ph-gas-pump"></i>
+            </div>
+            <div>
+                <h1>Украинские АЗС</h1>
+                <p><a href="https://github.com/AlexeyRF/Database-of-Ukrainian-gas-stations">Исходный код и база</a> </p>
+            </div>
+        </header>
+    </div>
+
+    <!-- Sidebar Info Panel -->
+    <aside id="info-panel" class="glass-panel info-panel hidden">
+        <button id="close-panel" class="icon-btn close-btn" title="Закрыть">
+            <i class="ph ph-x"></i>
+        </button>
+        <div class="info-content">
+            <h2 id="st-name">Название Сети</h2>
+            
+            <div class="info-group">
+                <span class="info-label">Адрес</span>
+                <div class="info-value-container">
+                    <span id="st-addr" class="info-value">...</span>
+                    <button class="icon-btn copy-btn" data-copy-target="st-addr" title="Копировать">
+                        <i class="ph ph-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Координаты (WGS-84)</span>
+                <div class="info-value-container">
+                    <span id="st-wgs" class="info-value">...</span>
+                    <button class="icon-btn copy-btn" data-copy-target="st-wgs" title="Копировать">
+                        <i class="ph ph-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Координаты (СК-42)</span>
+                <div class="info-value-container">
+                    <span id="st-sk42" class="info-value">...</span>
+                    <button class="icon-btn copy-btn" data-copy-target="st-sk42" title="Копировать">
+                        <i class="ph ph-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <a id="st-gmap-link" href="#" target="_blank" class="action-button">
+                <i class="ph ph-map-pin"></i> Открыть в Google Maps
+            </a>
+        </div>
+    </aside>
+
+    <div id="toast" class="toast">Скопировано в буфер обмена!</div>
+
+    <script src="stations_data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
