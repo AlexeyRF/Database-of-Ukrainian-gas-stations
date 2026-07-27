@@ -1,35 +1,63 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Карта АЗС Украина СК-42 WGS-84 Заправки ТЭК Украины Топливо Энергетика База Данных">
-
-    <title>Интерактивная Карта АЗС</title>
+    <title>База даних инфраструктуры украины</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
-    <!-- Proj4JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
-    <!-- PapaParse -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Yandex Maps API -->
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <!-- Proj4JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="map"></div>
     
     <div class="overlay-ui">
         <header class="glass-panel main-header">
-            <div class="header-icon">
-                <i class="ph-fill ph-gas-pump"></i>
+            <div class="header-content">
             </div>
-            <div>
-                <h1>Украинские АЗС</h1>
-                <p><a href="https://github.com/AlexeyRF/Database-of-Ukrainian-gas-stations">Исходный код и база</a> </p>
+            
+            <div class="layer-controls">
+			<h1>Инфраструктура хохланда</h1>
+                <h3>Выбор набора</h3>
+                <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+                    <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="layer-lun" value="lun_gas_stations" checked>
+                        <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background: #f59e0b;"></span>
+                        LUN.ua АЗС (подтверждены)
+                    </label>
+                    <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="layer-osm-gas" value="osm_gas_stations">
+                        <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background: #fbbf24;"></span>
+                        OSINT АЗС
+                    </label>
+                    <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="layer-factories" value="osm_factories">
+                        <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background: #ef4444;"></span>
+                        Заводы
+                    </label>
+                    <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="layer-railways" value="osm_railway_stations">
+                        <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background: #3b82f6;"></span>
+                        ЖД станции
+                    </label>
+                    <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="layer-substations" value="osm_substations">
+                        <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background: #8b5cf6;"></span>
+                        Подстанции
+                    </label>
+                    <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="layer-logistics" value="osm_logistics">
+                        <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background: #10b981;"></span>
+                        Логистические центры
+                    </label>
+                </div>
             </div>
         </header>
     </div>
@@ -40,23 +68,13 @@
             <i class="ph ph-x"></i>
         </button>
         <div class="info-content">
-            <h2 id="st-name">Название Сети</h2>
+            <h2 id="st-name">Название</h2>
             
-            <div class="info-group">
-                <span class="info-label">Адрес</span>
-                <div class="info-value-container">
-                    <span id="st-addr" class="info-value">...</span>
-                    <button class="icon-btn copy-btn" data-copy-target="st-addr" title="Копировать">
-                        <i class="ph ph-copy"></i>
-                    </button>
-                </div>
-            </div>
-
             <div class="info-group">
                 <span class="info-label">Координаты (WGS-84)</span>
                 <div class="info-value-container">
-                    <span id="st-wgs" class="info-value">...</span>
-                    <button class="icon-btn copy-btn" data-copy-target="st-wgs" title="Копировать">
+                    <span id="st-coords" class="info-value">...</span>
+                    <button class="icon-btn copy-btn" data-copy-target="st-coords" title="Копировать">
                         <i class="ph ph-copy"></i>
                     </button>
                 </div>
@@ -78,9 +96,12 @@
         </div>
     </aside>
 
-    <div id="toast" class="toast">Скопировано в буфер обмена!</div>
+    <div id="toast" class="toast">Скопировано!</div>
 
-    <script src="stations_data.js"></script>
+    <!-- Data -->
+    <script src="compiled_datasets.js"></script>
+    
+    <!-- JS -->
     <script src="script.js"></script>
 </body>
 </html>

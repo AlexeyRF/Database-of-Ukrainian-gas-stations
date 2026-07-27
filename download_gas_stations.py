@@ -13,7 +13,6 @@ def get_details(point):
     point_id = point['id']
     try:
         url = f'https://misto.lun.ua/api/v1/svitlo/points/{point_id}'
-        # Делаем запрос через ваш прокси
         resp = requests.get(url, proxies=PROXIES, timeout=15)
         data = resp.json().get('data', {})
         
@@ -38,12 +37,10 @@ def main():
         print("Ошибка загрузки основной карты:", e)
         return
 
-    # Категория 9 - это АЗС в API lun.ua
     azs_points = [p for p in all_points if p.get('category') == 9]
     print(f"Найдено {len(azs_points)} АЗС на карте. Скачиваем их данные (займет около минуты)...")
 
     gas_stations = []
-    # Загружаем детальную информацию по каждой АЗС параллельно
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         results = executor.map(get_details, azs_points)
         for res in results:
@@ -52,7 +49,7 @@ def main():
 
     print(f"Успешно загружено {len(gas_stations)} заправок.")
     
-    # Формируем CSV строку в памяти
+
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=['id', 'name', 'address', 'lat', 'lng'])
     writer.writeheader()
@@ -60,11 +57,9 @@ def main():
     
     csv_string = output.getvalue()
     
-    # Сохраняем все заправки в формат stations_data.js
     filename = 'stations_data.js'
     with open(filename, 'w', encoding='utf-8') as f:
-        # json.dumps аккуратно экранирует все кавычки и переносы строк, 
-        # формируя правильную JavaScript строку
+
         js_content = f"const stationsData = {json.dumps(csv_string)};\n"
         f.write(js_content)
         
