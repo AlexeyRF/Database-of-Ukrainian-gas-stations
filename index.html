@@ -6,10 +6,12 @@
     <title>База даних инфраструктуры украины</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Yandex Maps API -->
+    <!-- Yandex Maps -->
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
     <!-- Proj4JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+    <!-- Turf.js -->
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <!-- CSS -->
@@ -24,7 +26,7 @@
             </div>
             
             <div class="layer-controls">
-			<h1>Инфраструктура хохланда</h1>
+			<h1>Инфраструктура украины</h1>
                 <h3>Выбор набора</h3>
                 <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
                     <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
@@ -87,6 +89,41 @@
                     <button class="icon-btn copy-btn" data-copy-target="st-sk42" title="Копировать">
                         <i class="ph ph-copy"></i>
                     </button>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">До РФ</span>
+                <div class="info-value-container">
+                    <span id="st-distance" class="info-value">...</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">До Беларуси</span>
+                <div class="info-value-container">
+                    <span id="st-dist-belarus" class="info-value">...</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">До РФ + РБ</span>
+                <div class="info-value-container">
+                    <span id="st-dist-rf-by" class="info-value">...</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">До Приднестровья (Тирасполь)</span>
+                <div class="info-value-container">
+                    <span id="st-dist-tiraspol" class="info-value">...</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">До Ирана</span>
+                <div class="info-value-container">
+                    <span id="st-dist-iran" class="info-value">...</span>
                 </div>
             </div>
 

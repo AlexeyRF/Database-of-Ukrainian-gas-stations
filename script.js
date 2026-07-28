@@ -1,5 +1,53 @@
 proj4.defs('EPSG:4326', '+proj=longlat +datum=WGS84 +no_defs');
 
+let borderFeaturesRF = [];
+let borderFeaturesBY = [];
+let borderFeaturesIR = [];
+
+function loadBorders(url, targetArray) {
+    fetch(url)
+        .then(res => res.json())
+        .then(coords => {
+            if (!coords || coords.length === 0) return;
+            // The JSON contains polygon coords or multipolygon coords
+            // For safety, let's wrap it correctly
+            let multiPoly;
+            try {
+                multiPoly = turf.multiPolygon(coords);
+            } catch(e) {
+                // If it fails, it might be a single polygon
+                multiPoly = turf.polygon(coords);
+            }
+            const lines = turf.polygonToLine(multiPoly);
+            if (lines.type === 'FeatureCollection') {
+                targetArray.push(...lines.features);
+            } else {
+                targetArray.push(lines);
+            }
+        })
+        .catch(e => console.error("Error loading " + url + ":", e));
+}
+
+loadBorders('russian_polygons.json', borderFeaturesRF);
+loadBorders('belarus_polygons.json', borderFeaturesBY);
+loadBorders('iran_polygons.json', borderFeaturesIR);
+
+function getDistanceToLines(pt, linesArr) {
+    if (!linesArr || linesArr.length === 0) return null;
+    let minDistance = Infinity;
+    linesArr.forEach(line => {
+        try {
+            const dist = turf.pointToLineDistance(pt, line, {units: 'kilometers'});
+            if (dist < minDistance) {
+                minDistance = dist;
+            }
+        } catch (e) {
+            // Ignore geometry errors
+        }
+    });
+    return minDistance === Infinity ? null : minDistance;
+}
+
 function convertToSk42(lat, lng) {
     try {
         const ln = parseFloat(lng);
@@ -125,6 +173,29 @@ function openInfoPanel(point) {
     const gmapLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
     document.getElementById('st-gmap-link').href = gmapLink;
 
+    const pt = turf.point([parseFloat(lng), parseFloat(lat)]);
+    const tiraspolPt = turf.point([29.6267, 46.8364]);
+
+    const distRF = getDistanceToLines(pt, borderFeaturesRF);
+    const distBY = getDistanceToLines(pt, borderFeaturesBY);
+    const distIR = getDistanceToLines(pt, borderFeaturesIR);
+    const distTiraspol = turf.distance(pt, tiraspolPt, {units: 'kilometers'});
+
+    document.getElementById('st-distance').textContent = distRF !== null ? distRF.toFixed(2) + ' км' : 'Дані не завантажено';
+    document.getElementById('st-dist-belarus').textContent = distBY !== null ? distBY.toFixed(2) + ' км' : 'Дані не завантажено';
+    
+    if (distRF !== null && distBY !== null) {
+        document.getElementById('st-dist-rf-by').textContent = Math.min(distRF, distBY).toFixed(2) + ' км';
+    } else if (distRF !== null) {
+        document.getElementById('st-dist-rf-by').textContent = distRF.toFixed(2) + ' км';
+    } else if (distBY !== null) {
+        document.getElementById('st-dist-rf-by').textContent = distBY.toFixed(2) + ' км';
+    } else {
+        document.getElementById('st-dist-rf-by').textContent = 'Дані не завантажено';
+    }
+
+    document.getElementById('st-dist-iran').textContent = distIR !== null ? distIR.toFixed(2) + ' км' : 'Дані не завантажено';
+    document.getElementById('st-dist-tiraspol').textContent = distTiraspol.toFixed(2) + ' км';
     infoPanel.classList.add('visible');
 }
 
